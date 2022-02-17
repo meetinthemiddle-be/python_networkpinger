@@ -1,0 +1,2 @@
+Define environment vars NETWORKMONITOR_MYSQL_USER and NETWORKMONITOR_MYSQL_PASS to connect to the database.
+Failing to do so, ping.py will tell you how to do that.
