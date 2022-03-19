@@ -7,16 +7,13 @@ from functions import get_environment_variable
 
 
 
-
 mydb = mysql.connector.connect(
-  host="192.168.0.162",
+  host=get_environment_variable('NETWORKMONITOR_MYSQL_HOST'),
   user = get_environment_variable('NETWORKMONITOR_MYSQL_USER'),
   password= get_environment_variable('NETWORKMONITOR_MYSQL_PASS'),
   database="network_connectivity"
 ) 
 mycursor = mydb.cursor()
-
-
 
 ping_parser = pingparsing.PingParsing()
 transmitter = pingparsing.PingTransmitter()
@@ -27,21 +24,13 @@ result_dict = ping_parser.parse(result).as_dict()
 
 
 now = datetime.now()
+
 time = now.strftime("%Y-%m-%d %H:%M:%S")
-
 ip_address = result_dict["destination"]
-
-if result_dict["packet_loss_count"] == 0:
-    success = "1"
-else:
-    success = "0"
-
-
-
+success = int(100*(transmitter.count - result_dict["packet_loss_count"])/transmitter.count)
 rtt = int(result_dict["rtt_avg"])
-
-
 sql = 'INSERT INTO network_connectivity.pings (time, ip_address, success, rtt) VALUES ("%s", "%s", %s, %s);' % (time, ip_address, success, rtt)
+
 print(sql)
 
 try:
