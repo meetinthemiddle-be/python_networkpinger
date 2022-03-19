@@ -27,7 +27,10 @@ now = datetime.now()
 
 time = now.strftime("%Y-%m-%d %H:%M:%S")
 ip_address = result_dict["destination"]
-success = int(100*(transmitter.count - result_dict["packet_loss_count"])/transmitter.count)
+if result_dict["packet_loss_count"] is None:
+    success = 0
+else:
+    success = int(100*(transmitter.count - result_dict["packet_loss_count"])/transmitter.count)
 rtt = int(result_dict["rtt_avg"])
 sql = 'INSERT INTO network_connectivity.pings (time, ip_address, success, rtt) VALUES ("%s", "%s", %s, %s);' % (time, ip_address, success, rtt)
 
